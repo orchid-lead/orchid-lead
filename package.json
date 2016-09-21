@@ -1,0 +1,36 @@
+{
+  "name": "orchid-lead",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/orchid-lead.js",
+  "bin": {
+    "orchid-lead": "bin/orchid-lead"
+  },
+  "dependencies": {
+    "chokidar": "^1.6.0",
+    "commander": "^2.9.0",
+    "eazy-logger": "^3.0.2",
+    "findup-sync": "^0.4.2",
+    "front-matter": "^2.1.0",
+    "fs-vacuum": "^1.2.9",
+    "glob": "^7.0.5",
+    "handlebars": "^4.0.5",
+    "lodash": "^4.15.0",
+    "minimatch": "^3.0.3",
+    "mkdirp": "^0.5.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keithws/orchid-lead.git"
+  },
+  "author": "Keith W. Shaw <keith.w.shaw@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/keithws/orchid-lead/issues"
+  },
+  "homepage": "https://github.com/keithws/orchid-lead#readme"
+}
