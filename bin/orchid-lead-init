@@ -1,0 +1,83 @@
+#!/usr/bin/env node
+
+"use strict";
+
+const path = require("path");
+const pkg = require("../package.json");
+const zlib = require("zlib");
+
+const program = require("commander");
+const logger    = require("eazy-logger").Logger({
+    prefix: "[{gray:OL}] ",
+    useLevelPrefixes: false
+});
+const mkdirp = require("mkdirp");
+const request = require("request");
+const tar = require("tar");
+
+// setup init command
+program
+    .version(pkg.version)
+    .description("Initialzie directory with Orchid Lead directory structure.")
+    .usage("[options] [dirname]")
+/*
+    .option("--output <path>", "path where output files are saved", "public")
+    .option("--site <path>", "path to site", "site")
+    .option("--helpers <path>", "path to helpers", "site/helpers")
+    .option("--layouts <path>", "path to layouts", "site/layouts")
+    .option("--pages <path>", "path to pages", "site/pages")
+    .option("--partials <path>", "path to partials", "site/partials")
+*/
+    .option("--with <github/repo>", "initialize with a starter kit")
+    .parse(process.argv);
+
+logger.info("Initialzing files...");
+
+// by default init in current working directory
+if (program.args.length === 0) {
+
+    program.args.push(".");
+
+}
+
+program.args.forEach(function processArg (dirname) {
+
+    let initPath, starterKit, starterKitURL, output;
+
+    // get full path to each dirname
+    initPath = path.resolve(dirname);
+
+    // create directory
+    mkdirp(initPath);
+
+    if (program.with) {
+
+        // initialize with a custom starter kit
+        if (program.with.match(/^[a-zA-Z0-9][a-zA-Z0-9_\-]+[a-zA-Z0-9]\/[a-zA-Z0-9_\-]+$/)) {
+
+            starterKit = program.with;
+
+        } else {
+
+            logger.error("Invalid github repo specified for --with option.");
+
+        }
+
+    } else {
+
+        // initialize with the default starter kit
+        starterKit = "orchid-lead/starter-kit-default";
+
+    }
+
+    // download starter kit archive from github
+    starterKitURL = `https://github.com/${starterKit}/archive/master.tar.gz`;
+    output = tar.Extract({
+        "path": initPath,
+        "strip": 1
+    });
+    request(starterKitURL).pipe(zlib.createGunzip()).pipe(output);
+
+    // TODO ask the user where they want their files and merge their choices with the specified command options, then extract the starter kit into a temporary directory and change the folder names as indicated by the user
+
+});

@@ -1,6 +1,6 @@
 {
   "name": "orchid-lead",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "",
   "main": "lib/orchid-lead.js",
   "bin": {
@@ -17,7 +17,9 @@
     "handlebars": "^4.0.5",
     "lodash": "^4.15.0",
     "minimatch": "^3.0.3",
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^0.5.1",
+    "request": "^2.75.0",
+    "tar": "^2.2.1"
   },
   "devDependencies": {},
   "scripts": {
