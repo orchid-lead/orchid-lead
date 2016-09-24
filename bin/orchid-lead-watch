@@ -1,0 +1,375 @@
+#!/usr/bin/env node
+
+"use strict";
+
+const fs = require("fs");
+const path = require("path");
+
+const program = require("commander");
+const glob = require("glob");
+const chokidar = require("chokidar");
+const logger    = require("eazy-logger").Logger({
+    prefix: "[{gray:OL}] ",
+    useLevelPrefixes: false
+});
+const mkdirp = require("mkdirp");
+const vacuum = require("fs-vacuum");
+const minimatch = require("minimatch");
+
+const OrchidLead = require("../lib/orchid-lead");
+
+// setup watch command
+program
+    .usage("[options] [source files...]")
+    .description("Watch source files for changes and regenerate output files on-demand.")
+    .option("-C, --config <path>", "path to config file", ".orchidleadrc")
+    .option("-c, --copy-static-files", "copy static files to output folder")
+    .parse(process.argv);
+
+let ol;
+
+ol = new OrchidLead({
+    output: program.output,
+    site: program.site,
+    helpers: program.helpers,
+    layouts: program.layouts,
+    pages: program.pages,
+    partials: program.partials
+});
+
+const staticFilePatterns = [
+    path.join(ol.path.pages, "**/*.css"),
+    path.join(ol.path.pages, "**/!(*data).js"),
+    path.join(ol.path.pages, "**/*.svg"),
+    path.join(ol.path.pages, "**/*.png"),
+    path.join(ol.path.pages, "**/*.(jpg|jpeg)"),
+];
+
+/**
+ * find and build page file
+ */
+function findPageFile (file) {
+
+    var test;
+    var elements = path.parse(file);
+    
+    if (elements.ext === ".hbs") {
+
+        // if the extension is hbs then you found the page file
+        return file;
+
+    } else {
+
+        // change the extension to hbs and look for that file
+        elements.ext = ".hbs";
+        elements.base = null;
+        test = path.format(elements);
+        try {
+
+            fs.accessSync(test, fs.constants.R_OK);
+            return test;
+
+        } catch (e) {
+
+            // drop the .data extension and look for that file
+            elements.name = path.basename(elements.name, ".data");
+            test = path.format(elements);
+            try {
+
+                fs.accessSync(test, fs.constants.R_OK);
+                return test;
+
+            } catch (e) {
+
+                // change the name to match the dirname and look for that file
+                elements.name = path.basename(path.dirname(file));
+                test = path.format(elements);
+                try {
+
+                    fs.accessSync(test, fs.constants.R_OK);
+                    return test;
+
+                } catch (e) {
+
+                    // change the name to index and look for that file
+                    elements.name = "index";
+                    test = path.format(elements);
+                    try {
+
+                        fs.accessSync(test, fs.constants.R_OK);
+                        return test;
+
+                    } catch (e) {
+
+                        // error, cannot find related page
+                        logger.warn("Unable to find page file for %s", file);
+                        return "";
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+function tryToCreate (file) {
+
+    try {
+        ol.create(file);
+    } catch (err) {
+        logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
+        logger.error("{red:%s}", err);
+    }
+
+}
+
+function updateOrCreate (file) {
+
+    // copy static files
+    var match = false;
+    program.copyStaticFiles && staticFilePatterns.forEach(function (pattern) {
+
+        if (minimatch(file, pattern)) {
+
+            match = true;
+            tryToCopyStaticFile(file);
+
+        }
+
+    });
+
+    if (!match) {
+
+        // find page file that coorisponds to the file that was chagned
+        file = findPageFile(file);
+        if (file) {
+
+            tryToCreate(file);
+
+        }
+
+    }
+
+}
+
+function findAndCreate (file) {
+
+    logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.site, file));
+    updateOrCreate(file);
+
+}
+
+function findAndUpdate (file) {
+
+    logger.info("{cyan:File changed:} {magenta:%s}", path.relative(ol.path.site, file));
+
+    // if file is a data file, then delete it's entry from the require() cache
+    if (file.match(/data\.js(on)?$/)) {
+
+        delete require.cache[path.resolve(file)];
+
+    }
+    updateOrCreate(file);
+
+}
+
+
+function findAndDestroy (file) {
+
+    logger.info("{cyan:File deleted:} {magenta:%s}", path.relative(ol.path.page, file));
+
+    // remove static files
+    program.copyStaticFiles && staticFilePatterns.forEach(function (pattern) {
+
+        if (minimatch(file, pattern)) {
+
+            tryToDeleteStaticFile(file);
+
+        }
+
+    });
+
+    // find page file that coorisponds to the file that was chagned
+    file = findPageFile(file);
+    if (file) {
+
+        ol.destroy(file);
+
+    }
+
+}
+
+function buildAll (file) {
+
+    logger.info("{cyan:File changed:} {magenta:%s}", path.relative(ol.path.site, file));
+
+    let arg = path.join(ol.path.pages, "**/*.hbs");
+    glob(arg, function processFiles (err, files) {
+        if (err) {
+            throw err;
+        }
+
+        if (files !== [arg]) {
+            files.forEach(function processFile (file) {
+
+                logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.pages, file));
+                tryToCreate(file);
+
+            });
+        }
+    });
+
+}
+
+function changeSiteAndBuildAll (file) {
+
+    // if file is a data file, then delete it's entry from the require() cache
+    if (file.match(/data\.js(on)?$/)) {
+
+        delete require.cache[path.resolve(file)];
+
+    }
+
+    // reregister Handlebars helpers
+    // reregister Handlebars partials
+    // TODO is this really a good idea?
+    ol = new OrchidLead({
+        output: program.output,
+        site: program.site,
+        helpers: program.helpers,
+        layouts: program.layouts,
+        pages: program.pages,
+        partials: program.partials
+    });
+
+    return buildAll(file);
+
+}
+
+function tryToCopyStaticFile (file) {
+
+    try {
+
+        let relativePath = path.relative(ol.path.site, file);
+
+        // drop the first folder name in the relative path
+        relativePath = relativePath.split(path.sep).slice(1).join(path.sep);
+        let outputPath = path.join(ol.path.output, relativePath);
+
+        // ensure directory exists
+        mkdirp.sync(path.dirname(outputPath));
+
+        // copy file with streams
+        let source = fs.createReadStream(file, "utf8");
+        source.on("error", function (err) {
+            logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
+            logger.error("{red:%s}", err);
+        });
+        let target = fs.createWriteStream(outputPath);
+        target.on("error", function (err) {
+            logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
+            logger.error("{red:%s}", err);
+        });
+        target.on("finish", function () {
+            logger.info("{cyan:File copied:} {magenta:%s}", path.relative(ol.path.root, outputPath));
+        });
+        source.pipe(target);
+
+    } catch (err) {
+
+        logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
+        logger.error("{red:%s}", err);
+
+    }
+
+}
+
+function tryToDeleteStaticFile (file) {
+
+    try {
+
+        fs.unlinkSync(file);
+
+        // clean up empty directories
+        vacuum(path.dirname(file), { base: ol.path.root }, function (err) {
+            if (err) {
+                throw err;
+            }
+            logger.info("Done vacuuming.");
+        });
+
+    } catch (err) {
+
+        logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
+        logger.error("{red:%s}", err);
+
+    }
+
+}
+
+
+// by default watch pages and build each page that changes
+// additionally, watch site files and rebuild entire site when changed
+if (program.args.length === 0) {
+
+    program.args.push(ol.path.pages);
+
+}
+
+// setup watching the files specified
+program.args.forEach(function processArg (arg) {
+
+    var watcher = chokidar.watch(arg, {
+        ignored: /[\/\\]\./,
+        persistent: true
+    });
+
+    watcher
+    .on("add", findAndCreate)
+    .on("change", findAndUpdate)
+    .on("unlink", findAndDestroy);
+
+});
+
+// always watch site files and rebuild entire site when changed
+var watcher = chokidar.watch([
+    ol.path.helpers,
+    ol.path.layouts,
+    ol.path.partials,
+    path.resolve(ol.path.site, "data.js")
+], {
+    ignored: /[\/\\]\./,
+    persistent: true
+});
+
+watcher
+.on("change", changeSiteAndBuildAll);
+
+// watch static files if copy static files is enabled
+if (program.copyStaticFiles) {
+
+    var staticPath = path.join(ol.path.site, "static");
+    var staticWatcher = chokidar.watch(staticPath, {
+        ignored: /[\/\\]\./,
+        persistent: true
+    });
+
+    staticWatcher
+    .on("add", function (file) {
+        logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.site, file));
+        tryToCopyStaticFile(file);
+    })
+    .on("change", function (file) {
+        logger.info("{cyan:File changed:} {magenta:%s}", path.relative(ol.path.site, file));
+        tryToCopyStaticFile(file);
+    })
+    .on("unlink", tryToDeleteStaticFile);
+
+}
+
+logger.info("Watching files...");

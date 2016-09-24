@@ -1,0 +1,192 @@
+#!/usr/bin/env node
+
+"use strict";
+
+const fs = require("fs");
+const path = require("path");
+const pkg = require("../package.json");
+
+const program = require("commander");
+const glob = require("glob");
+const logger    = require("eazy-logger").Logger({
+    prefix: "[{gray:OL}] ",
+    useLevelPrefixes: false
+});
+const mkdirp = require("mkdirp");
+
+const OrchidLead = require("../lib/orchid-lead");
+
+// setup build command
+program
+    .version(pkg.version)
+    .description("Generate output files from the source files.")
+    .usage("[options] [source files...]")
+    .option("-C, --config <path>", "path to config file", ".orchidleadrc")
+    .option("-c, --copy-static-files", "copy static files to output folder")
+    .parse(process.argv);
+
+let basename, cwd, defaultFile, ol;
+
+ol = new OrchidLead({
+    output: program.output,
+    site: program.site,
+    helpers: program.helpers,
+    layouts: program.layouts,
+    pages: program.pages,
+    partials: program.partials
+});
+
+const staticFilePatterns = [
+    path.join(ol.path.pages, "**/*.css"),
+    path.join(ol.path.pages, "**/!(*data).js"),
+    path.join(ol.path.pages, "**/*.svg"),
+    path.join(ol.path.pages, "**/*.png"),
+    path.join(ol.path.pages, "**/*.(jpg|jpeg)"),
+];
+
+function tryToCopyStaticFile (file) {
+
+    try {
+
+        let relativePath = path.relative(ol.path.site, file);
+
+        // drop the first folder name in the relative path
+        relativePath = relativePath.split(path.sep).slice(1).join(path.sep);
+        let outputPath = path.join(ol.path.output, relativePath);
+
+        // ensure directory exists
+        mkdirp.sync(path.dirname(outputPath));
+
+        // copy file with streams
+        let source = fs.createReadStream(file, "utf8");
+        source.on("error", function (err) {
+            logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
+            logger.error("{red:%s}", err);
+        });
+        let target = fs.createWriteStream(outputPath);
+        target.on("error", function (err) {
+            logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
+            logger.error("{red:%s}", err);
+        });
+        target.on("finish", function () {
+            logger.info("{cyan:File copied:} {magenta:%s}", path.relative(ol.path.root, outputPath));
+        });
+        source.pipe(target);
+
+    } catch (err) {
+
+        logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
+        logger.error("{red:%s}", err);
+
+    }
+
+}
+
+if (program.args.length === 0) {
+
+    // look for default files to process
+    // look for a Handlebars file in the current work directory
+    cwd = process.cwd();
+    basename = path.basename(cwd);
+
+    try {
+
+        // look for a file that matches the directory name
+        defaultFile = path.resolve(cwd, basename + ".hbs");
+        fs.accessSync(defaultFile, fs.constants.R_OK);
+        program.args.push(defaultFile);
+
+    } catch (err) {
+
+        try {
+
+            // fallback to index.hbs
+            defaultFile = path.resolve(cwd, "index.hbs");
+            fs.accessSync(defaultFile, fs.constants.R_OK);
+            program.args.push(defaultFile);
+
+        } catch (err) {
+
+            try {
+
+                // otherwise build the homepage
+                defaultFile = path.resolve(ol.path.pages, "index.hbs");
+                fs.accessSync(defaultFile, fs.constants.R_OK);
+                program.args.push(defaultFile);
+
+            } catch (err) {
+
+                throw err;
+
+            }
+
+        }
+
+    }
+
+}
+
+// read and process the files specified
+program.args.forEach(function processArg (arg) {
+
+    glob(arg, function processFiles (err, files) {
+        if (err) {
+            throw err;
+        }
+
+        if (files !== [arg]) {
+            files.forEach(function processFile (file) {
+
+                logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.root, file));
+                ol.create(file);
+
+            });
+        }
+    });
+
+});
+
+if (program.copyStaticFiles) {
+
+    // copy all files in the static folder
+    let staticDir = path.join(ol.path.site, "static");
+    let pattern = path.join(staticDir, "**");
+    glob(pattern, { nodir: true }, function copyFiles (err, files) {
+
+        if (err) {
+            throw err;
+        }
+
+        if (files !== [pattern]) {
+            files.forEach(function processFile (file) {
+
+                tryToCopyStaticFile(file);
+
+            });
+        }
+
+    });
+
+    // copy static files in the pages folder
+    staticFilePatterns.forEach(function (pattern) {
+
+        glob(pattern, function copyFiles (err, files) {
+
+            if (err) {
+                throw err;
+            }
+
+            if (files !== [pattern]) {
+                files.forEach(function processFile (file) {
+
+                    tryToCopyStaticFile(file);
+
+                });
+            }
+
+        });
+
+    });
+
+
+}
