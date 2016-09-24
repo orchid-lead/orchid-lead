@@ -20,14 +20,6 @@ program
     .version(pkg.version)
     .description("Initialzie directory with Orchid Lead directory structure.")
     .usage("[options] [dirname]")
-/*
-    .option("--output <path>", "path where output files are saved", "public")
-    .option("--site <path>", "path to site", "site")
-    .option("--helpers <path>", "path to helpers", "site/helpers")
-    .option("--layouts <path>", "path to layouts", "site/layouts")
-    .option("--pages <path>", "path to pages", "site/pages")
-    .option("--partials <path>", "path to partials", "site/partials")
-*/
     .option("--with <github/repo>", "initialize with a starter kit")
     .parse(process.argv);
 
@@ -42,7 +34,7 @@ if (program.args.length === 0) {
 
 program.args.forEach(function processArg (dirname) {
 
-    let initPath, starterKit, starterKitURL, output;
+    let gunzip, initPath, output, starterKit;
 
     // get full path to each dirname
     initPath = path.resolve(dirname);
@@ -59,7 +51,8 @@ program.args.forEach(function processArg (dirname) {
 
         } else {
 
-            logger.error("Invalid github repo specified for --with option.");
+            logger.error("{red:Invalid github repo: %s}", program.with);
+            return;
 
         }
 
@@ -70,13 +63,22 @@ program.args.forEach(function processArg (dirname) {
 
     }
 
-    // download starter kit archive from github
-    starterKitURL = `https://github.com/${starterKit}/archive/master.tar.gz`;
+    // setup gzip and tar streams
     output = tar.Extract({
         "path": initPath,
         "strip": 1
     });
-    request(starterKitURL).pipe(zlib.createGunzip()).pipe(output);
+    gunzip = zlib.createGunzip();
+
+    // download starter kit and unarchive it
+    request(`https://github.com/${starterKit}/archive/master.tar.gz`)
+        .on("error", logger.error)
+        .pipe(gunzip)
+        .on("error", logger.error)
+        .pipe(output)
+        .on("error", (err) => {
+            logger.error(`{red:${err}}`);
+        });
 
     // TODO ask the user where they want their files and merge their choices with the specified command options, then extract the starter kit into a temporary directory and change the folder names as indicated by the user
 
