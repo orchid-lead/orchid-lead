@@ -21,13 +21,13 @@ program
     .version(pkg.version)
     .description("Generate output files from the source files.")
     .usage("[options] [source files...]")
-    .option("-C, --config <path>", "path to config file", ".orchidleadrc")
     .option("-c, --copy-static-files", "copy static files to output folder")
     .parse(process.argv);
 
 let basename, cwd, defaultFile, ol;
 
 ol = new OrchidLead({
+    config: program.config,
     output: program.output,
     site: program.site,
     helpers: program.helpers,

@@ -6,6 +6,7 @@ const pkg = require("../package.json");
 // setup sub-commands
 program
     .version(pkg.version)
+    .option("-C, --config <path>", "path to config file", ".orchidleadrc")
     .option("--output <path>", "path where output files are saved", "public")
     .option("--site <path>", "path to site", "site")
     .option("--helpers <path>", "path to helpers", "site/helpers")
