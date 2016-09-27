@@ -1,7 +1,8 @@
 {
   "name": "orchid-lead",
   "version": "1.0.0",
-  "description": "",
+  "description": "Generate HTML files from Handlebars templates with data from node.js modules or JSON data files.",
+  "keywords": "static-site-generator html-generator handlebars-templates handlebars templates layouts wax-on-layouts",
   "main": "lib/orchid-lead.js",
   "bin": {
     "orchid-lead": "bin/orchid-lead"
@@ -19,7 +20,8 @@
     "minimatch": "^3.0.3",
     "mkdirp": "^0.5.1",
     "request": "^2.75.0",
-    "tar": "^2.2.1"
+    "tar": "^2.2.1",
+    "wax-on": "^1.0.0"
   },
   "devDependencies": {},
   "scripts": {
@@ -27,12 +29,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/keithws/orchid-lead.git"
+    "url": "git@github.com:orchid-lead/orchid-lead.git"
   },
   "author": "Keith W. Shaw <keith.w.shaw@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/keithws/orchid-lead/issues"
+    "url": "https://github.com/orchid-lead/orchid-lead/issues"
   },
-  "homepage": "https://github.com/keithws/orchid-lead#readme"
+  "homepage": "https://github.com/orchid-lead/orchid-lead#readme"
 }

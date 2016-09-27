@@ -105,8 +105,8 @@ The Orchid Lead change log can be found in the [CHANGELOG.md][2] file within the
 
 Orchid Lead is available under the [MIT License][1].
 
-[1]: https://github.com/keithws/orchid-lead/blob/master/LICENSE
-[2]: https://github.com/keithws/orchid-lead/blob/master/CHANGELOG.md
+[1]: https://github.com/orchid-lead/orchid-lead/blob/master/LICENSE
+[2]: https://github.com/orchid-lead/orchid-lead/blob/master/CHANGELOG.md
 [3]: http://handlebarsjs.com
 [npm-build-tool]: https://www.keithcirkel.co.uk/how-to-use-npm-as-a-build-tool/
 [wax-on]: https://www.npmjs.com/package/wax-on
