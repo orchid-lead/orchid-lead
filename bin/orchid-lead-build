@@ -109,10 +109,8 @@ if (program.args.length === 0) {
 
             try {
 
-                // otherwise build the homepage
-                defaultFile = path.resolve(ol.path.pages, "index.hbs");
-                fs.accessSync(defaultFile, fs.constants.R_OK);
-                program.args.push(defaultFile);
+                // otherwise build everything
+                program.args.push(path.join(ol.path.pages, "**/*.hbs"));
 
             } catch (err) {
 
