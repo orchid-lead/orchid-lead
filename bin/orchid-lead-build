@@ -58,7 +58,7 @@ function tryToCopyStaticFile (file) {
         mkdirp.sync(path.dirname(outputPath));
 
         // copy file with streams
-        let source = fs.createReadStream(file, "utf8");
+        let source = fs.createReadStream(file);
         source.on("error", function (err) {
             logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
             logger.error("{red:%s}", err);
