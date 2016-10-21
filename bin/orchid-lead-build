@@ -12,7 +12,6 @@ const logger    = require("eazy-logger").Logger({
     prefix: "[{gray:OL}] ",
     useLevelPrefixes: false
 });
-const mkdirp = require("mkdirp");
 
 const OrchidLead = require("../lib/orchid-lead");
 
@@ -43,44 +42,6 @@ const staticFilePatterns = [
     path.join(ol.path.pages, "**/*.png"),
     path.join(ol.path.pages, "**/*.(jpg|jpeg)"),
 ];
-
-function tryToCopyStaticFile (file) {
-
-    try {
-
-        let relativePath = path.relative(ol.path.site, file);
-
-        // drop the first folder name in the relative path
-        relativePath = relativePath.split(path.sep).slice(1).join(path.sep);
-        let outputPath = path.join(ol.path.output, relativePath);
-
-        // ensure directory exists
-        mkdirp.sync(path.dirname(outputPath));
-
-        // copy file with streams
-        let source = fs.createReadStream(file);
-        source.on("error", function (err) {
-            logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
-            logger.error("{red:%s}", err);
-        });
-        let target = fs.createWriteStream(outputPath);
-        target.on("error", function (err) {
-            logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
-            logger.error("{red:%s}", err);
-        });
-        target.on("finish", function () {
-            logger.info("{cyan:File copied:} {magenta:%s}", path.relative(ol.path.root, outputPath));
-        });
-        source.pipe(target);
-
-    } catch (err) {
-
-        logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
-        logger.error("{red:%s}", err);
-
-    }
-
-}
 
 if (program.args.length === 0) {
 
@@ -158,7 +119,7 @@ if (program.copyStaticFiles) {
         if (files !== [pattern]) {
             files.forEach(function processFile (file) {
 
-                tryToCopyStaticFile(file);
+                ol.tryToCopyStaticFile(file);
 
             });
         }
@@ -177,7 +138,7 @@ if (program.copyStaticFiles) {
             if (files !== [pattern]) {
                 files.forEach(function processFile (file) {
 
-                    tryToCopyStaticFile(file);
+                    ol.tryToCopyStaticFile(file);
 
                 });
             }

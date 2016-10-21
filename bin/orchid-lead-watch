@@ -5,18 +5,16 @@
 const fs = require("fs");
 const path = require("path");
 
+const OrchidLead = require("../lib/orchid-lead");
 const program = require("commander");
 const glob = require("glob");
 const chokidar = require("chokidar");
-const logger    = require("eazy-logger").Logger({
-    prefix: "[{gray:OL}] ",
-    useLevelPrefixes: false
-});
-const mkdirp = require("mkdirp");
-const vacuum = require("fs-vacuum");
 const minimatch = require("minimatch");
 
-const OrchidLead = require("../lib/orchid-lead");
+const logger = require("eazy-logger").Logger({
+    "prefix": "[{gray:OL}] ",
+    "useLevelPrefixes": false
+});
 
 // setup watch command
 program
@@ -137,7 +135,7 @@ function updateOrCreate (file) {
         if (minimatch(file, pattern)) {
 
             match = true;
-            tryToCopyStaticFile(file);
+            ol.tryToCopyStaticFile(file);
 
         }
 
@@ -188,7 +186,7 @@ function findAndDestroy (file) {
 
         if (minimatch(file, pattern)) {
 
-            tryToDeleteStaticFile(file);
+            ol.tryToDeleteStaticFile(file);
 
         }
 
@@ -251,68 +249,6 @@ function changeSiteAndBuildAll (file) {
 
 }
 
-function tryToCopyStaticFile (file) {
-
-    try {
-
-        let relativePath = path.relative(ol.path.site, file);
-
-        // drop the first folder name in the relative path
-        relativePath = relativePath.split(path.sep).slice(1).join(path.sep);
-        let outputPath = path.join(ol.path.output, relativePath);
-
-        // ensure directory exists
-        mkdirp.sync(path.dirname(outputPath));
-
-        // copy file with streams
-        let source = fs.createReadStream(file, "utf8");
-        source.on("error", function (err) {
-            logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
-            logger.error("{red:%s}", err);
-        });
-        let target = fs.createWriteStream(outputPath);
-        target.on("error", function (err) {
-            logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
-            logger.error("{red:%s}", err);
-        });
-        target.on("finish", function () {
-            logger.info("{cyan:File copied:} {magenta:%s}", path.relative(ol.path.root, outputPath));
-        });
-        source.pipe(target);
-
-    } catch (err) {
-
-        logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
-        logger.error("{red:%s}", err);
-
-    }
-
-}
-
-function tryToDeleteStaticFile (file) {
-
-    try {
-
-        fs.unlinkSync(file);
-
-        // clean up empty directories
-        vacuum(path.dirname(file), { base: ol.path.root }, function (err) {
-            if (err) {
-                throw err;
-            }
-            logger.info("Done vacuuming.");
-        });
-
-    } catch (err) {
-
-        logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
-        logger.error("{red:%s}", err);
-
-    }
-
-}
-
-
 // by default watch pages and build each page that changes
 // additionally, watch site files and rebuild entire site when changed
 if (program.args.length === 0) {
@@ -362,13 +298,13 @@ if (program.copyStaticFiles) {
     staticWatcher
     .on("add", function (file) {
         logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.site, file));
-        tryToCopyStaticFile(file);
+        ol.tryToCopyStaticFile(file);
     })
     .on("change", function (file) {
         logger.info("{cyan:File changed:} {magenta:%s}", path.relative(ol.path.site, file));
-        tryToCopyStaticFile(file);
+        ol.tryToCopyStaticFile(file);
     })
-    .on("unlink", tryToDeleteStaticFile);
+    .on("unlink", ol.tryToDeleteStaticFile);
 
 }
 
