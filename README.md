@@ -110,6 +110,8 @@ Orchid Lead will also look for a nearby data file. The data file may be a static
 #### Sample data.js file (sync)
 
 ```js
+    // data.js (sync)
+    
     function calc() {
         return 2 + 2;
     }
@@ -122,6 +124,7 @@ Orchid Lead will also look for a nearby data file. The data file may be a static
 #### Sample data.js file (async)
 
 ```js
+    // data.js (async with promies)
     var request = require("request");
 
     module.exports = new Promise((resolve, reject) => {
@@ -134,6 +137,8 @@ Orchid Lead will also look for a nearby data file. The data file may be a static
                 if (response.statusCode == 200) {
                     data.googleHtml = body;
                     resolve(data);
+                } else {
+                    reject(new Error(`Invalid status code ${response.statusCode}`));
                 }
             }
         })
