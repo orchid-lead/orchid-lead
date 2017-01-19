@@ -96,14 +96,49 @@ Orchid Lead builds the a data context for each template it executes. It will pul
 
 Front matter is the easiest way to associate data with a template. The front matter must be formatted as a YAML block. Here's an example:
 
+```yaml
     ---
     title: Welcome to Company, Inc.
     description: At Company, we make the best gadgets.
     ---
+```
 
 Note, the data context is shared with Handlebars layouts and partials, so front matter is a great way to share data specific to template with a layout or a partial. Don't forget, Orchid Lead includes the [Wax On][wax-on] Handlebars helpers to extend templates and layouts with template inheritance.
 
 Orchid Lead will also look for a nearby data file. The data file may be a static JSON data file or a dynamic JavaScript data file. The data file should have the same basename as the template, but end in either `data.json` or `data.js`. The JavaScript data file must be a node module that returns a plain-old JavaScript object or a Promise.
+
+#### Sample data.js file (sync)
+
+```js
+    function calc() {
+        return 2 + 2;
+    }
+    
+    module.exports = {
+    	result: calc()
+    };
+```
+
+#### Sample data.js file (async)
+
+```js
+    var request = require("request");
+
+    module.exports = new Promise((resolve, reject) => {
+        let data = {};
+        
+        request("http://www.google.com", function (error, response, body) {
+            if (err) {
+                reject(err);
+            } else {
+                if (response.statusCode == 200) {
+                    data.googleHtml = body;
+                    resolve(data);
+                }
+            }
+        })
+    });
+```
 
 Site wide data is pulled in from `site/data.js`. All site-wide data is available under the `site` object in the Handlebars data context. The nearby data file and the front matter are merged together and available under the `page` object in the Hanldebars data context.
 
