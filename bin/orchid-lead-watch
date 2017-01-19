@@ -117,12 +117,16 @@ function findPageFile (file) {
 
 function tryToCreate (file) {
 
-    try {
-        ol.create(file);
-    } catch (err) {
+    ol.create(file).then(function (outputPath) {
+
+        logger.info("{cyan:File built:} {magenta:%s}", path.relative(ol.path.root, outputPath));
+
+    }).catch(function (err) {
+
         logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
         logger.error("{red:%s}", err);
-    }
+
+    });
 
 }
 
@@ -179,7 +183,7 @@ function findAndUpdate (file) {
 
 function findAndDestroy (file) {
 
-    logger.info("{cyan:File deleted:} {magenta:%s}", path.relative(ol.path.page, file));
+    logger.info("{cyan:File deleted:} {magenta:%s}", path.relative(ol.path.site, file));
 
     // remove static files
     program.copyStaticFiles && staticFilePatterns.forEach(function (pattern) {
@@ -196,7 +200,15 @@ function findAndDestroy (file) {
     file = findPageFile(file);
     if (file) {
 
-        ol.destroy(file);
+        ol.destroy(file).then(function (outputPath) {
+
+            logger.info("{cyan:File deleted:} {magenta:%s}", path.relative(ol.path.root, outputPath));
+
+        }).catch(function (err) {
+
+            throw err;
+
+        });
 
     }
 

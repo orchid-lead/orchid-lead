@@ -1,5 +1,11 @@
 # Orchid Lead Change Log
 
+_v2.0.0 — January 19, 2017_
+
+__Breaking Change:__ many API methods are now async to support async data.js with Promises. Note, the command line interface has not changed.
+
+* allow for async data.js files with Promises
+
 _v1.1.0 — October 21, 2016_
 
 * save config file with indentation
