@@ -1,5 +1,9 @@
 # Orchid Lead Change Log
 
+_v2.1.0 — February 6, 2017_
+
+* added page output path to data context before rendering
+
 _v2.0.0 — January 19, 2017_
 
 __Breaking Change:__ many API methods are now async to support async data.js with Promises. Note, the command line interface has not changed.
