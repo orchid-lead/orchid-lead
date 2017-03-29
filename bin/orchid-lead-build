@@ -97,14 +97,19 @@ program.args.forEach(function processArg (arg) {
             files.forEach(function processFile (file) {
 
                 logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.root, file));
+
                 ol.create(file).then(function (outputPath) {
 
                     logger.info("{cyan:File built:} {magenta:%s}", path.relative(ol.path.root, outputPath));
 
                 }).catch(function (err) {
 
+                    if (err.stack) {
+                        logger.error("{red:%s}", err.stack);
+                    } else {
+                        logger.error("{red:%s}", err);
+                    }
                     logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
-                    logger.error("{red:%s}", err);
 
                 });
 
