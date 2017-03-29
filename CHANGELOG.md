@@ -1,5 +1,9 @@
 # Orchid Lead Change Log
 
+_v2.1.1 — March 28, 2017_
+
+* improved error handling
+
 _v2.1.0 — February 6, 2017_
 
 * added page output path to data context before rendering

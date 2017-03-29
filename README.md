@@ -169,10 +169,8 @@ The default config filename is `.orchidleadrc` and the default location is in th
 * fix bug reading `.orchidleadrc` file from alternate path
 * allow default config to be overridden
 * ask user where they'd like their files to be during `init`
-* add `.orchidleadrc` file support for storing configuration
 * add `clean` sub-command for removing generated files
 * test performance
-* consolidate functions between the `build` and `watch` sub-commands
 * create JS API to ease use with Gulp
 * test with node 4.5.x
 * check for existing install before initializing
