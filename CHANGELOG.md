@@ -1,5 +1,11 @@
 # Orchid Lead Change Log
 
+_v2.1.2 — May 11, 2017_
+
+* fixed bug when processing an array to data contexts that lead to first context to resolve to be the only file reportedly created
+* properly log each file built
+* sorted the output paths when building an array of data contexts
+
 _v2.1.1 — March 28, 2017_
 
 * improved error handling

@@ -117,9 +117,12 @@ function findPageFile (file) {
 
 function tryToCreate (file) {
 
-    ol.create(file).then(function (outputPath) {
+    ol.create(file).then(function (outputPaths) {
 
-        logger.info("{cyan:File built:} {magenta:%s}", path.relative(ol.path.root, outputPath));
+        outputPaths.sort();
+        outputPaths.forEach(outputPath => {
+            logger.info("{cyan:File built:} {magenta:%s}", path.relative(ol.path.root, outputPath));
+        });
 
     }).catch(function (err) {
 
