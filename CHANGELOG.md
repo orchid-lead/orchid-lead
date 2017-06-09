@@ -1,5 +1,11 @@
 # Orchid Lead Change Log
 
+_v2.1.3 — June 8, 2017_
+
+* switched to using graceful-fs to prevent EMFILE errors
+* changed log level for file copied and file added form info to debug
+
+
 _v2.1.2 — May 11, 2017_
 
 * fixed bug when processing an array to data contexts that lead to first context to resolve to be the only file reportedly created
