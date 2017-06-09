@@ -2,8 +2,8 @@
 
 "use strict";
 
-var fs = require('fs');
-var gracefulFs = require('graceful-fs');
+var fs = require("fs");
+var gracefulFs = require("graceful-fs");
 gracefulFs.gracefulify(fs);
 
 const path = require("path");
