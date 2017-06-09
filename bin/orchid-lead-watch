@@ -2,7 +2,10 @@
 
 "use strict";
 
-const fs = require("fs");
+var fs = require('fs');
+var gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
+
 const path = require("path");
 
 const OrchidLead = require("../lib/orchid-lead");

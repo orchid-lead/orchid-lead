@@ -16,6 +16,7 @@
     "front-matter": "^2.1.1",
     "fs-vacuum": "^1.2.9",
     "glob": "^7.1.1",
+    "graceful-fs": "^4.1.11",
     "handlebars": "^4.0.6",
     "lodash": "^4.17.2",
     "minimatch": "^3.0.3",
