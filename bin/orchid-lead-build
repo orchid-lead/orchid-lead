@@ -99,7 +99,7 @@ program.args.forEach(function processArg (arg) {
         if (files !== [arg]) {
             files.forEach(function processFile (file) {
 
-                logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.root, file));
+                logger.debug("{cyan:File added:} {magenta:%s}", path.relative(ol.path.root, file));
 
                 ol.create(file).then(function (outputPaths) {
 
