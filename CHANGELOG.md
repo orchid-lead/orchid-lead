@@ -1,5 +1,10 @@
 # Orchid Lead Change Log
 
+
+_v2.1.4 — June 13, 2017_
+
+* allow constructor to be called without options
+
 _v2.1.3 — June 8, 2017_
 
 * switched to using graceful-fs to prevent EMFILE errors
