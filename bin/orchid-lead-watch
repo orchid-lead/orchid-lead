@@ -2,10 +2,11 @@
 
 "use strict";
 
-var fs = require("fs");
+var realFs = require("fs");
 var gracefulFs = require("graceful-fs");
-gracefulFs.gracefulify(fs);
+gracefulFs.gracefulify(realFs);
 
+const fs = require("graceful-fs");
 const path = require("path");
 
 const OrchidLead = require("../lib/orchid-lead");
@@ -167,8 +168,11 @@ function updateOrCreate (file) {
 
 function findAndCreate (file) {
 
-    logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.site, file));
-    updateOrCreate(file);
+    // ignore data.js files during an add event
+    if (!file.match(/data\.js$/)) {
+        logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.site, file));
+        updateOrCreate(file);
+    }
 
 }
 

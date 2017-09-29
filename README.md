@@ -163,6 +163,17 @@ The `orchid-lead` command accepts the following arguments.
 The default config filename is `.orchidleadrc` and the default location is in the project folder. The file is saved in JSON format. Note, command line arguments override the config file settings.
 
 
+## Options
+
+Optionally, orchid-lead can save a file with a list of timestamps for all the pages it encounters with a publication date, in the data context, in the future.
+
+The filename is currently hardcoded to `.future-publication-dates`. The timestamps are formatted as an integer with the number of seconds since the Unix Epoch, followed by the same timestamp in locale format, and seperated by a new line character. For example:
+
+	1506862800 10/1/2017, 6:00:00 AM
+	1507561200 10/9/2017, 8:00:00 AM
+	
+
+
 ## Todo
 
 * remove sync functions and use more Promises

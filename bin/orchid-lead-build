@@ -24,6 +24,7 @@ program
     .description("Generate output files from the source files.")
     .usage("[options] [source files...]")
     .option("-c, --copy-static-files", "copy static files to output folder")
+    .option("-s, --save-future-pub-dates", "save future publication dates")
     .parse(process.argv);
 
 let basename, cwd, defaultFile, ol;
@@ -37,14 +38,6 @@ ol = new OrchidLead({
     pages: program.pages,
     partials: program.partials
 });
-
-const staticFilePatterns = [
-    path.join(ol.path.pages, "**/*.css"),
-    path.join(ol.path.pages, "**/!(*data).js"),
-    path.join(ol.path.pages, "**/*.svg"),
-    path.join(ol.path.pages, "**/*.png"),
-    path.join(ol.path.pages, "**/*.(jpg|jpeg)"),
-];
 
 if (program.args.length === 0) {
 
@@ -89,67 +82,128 @@ if (program.args.length === 0) {
 }
 
 // read and process the files specified
-program.args.forEach(function processArg (arg) {
+Promise.all(program.args.map(arg => {
 
-    glob(arg, function processFiles (err, files) {
-        if (err) {
-            throw err;
-        }
+    return new Promise((resolve, reject) => {
 
-        if (files !== [arg]) {
-            files.forEach(function processFile (file) {
+        // get all the files matching the arguement
+        glob(arg, (err, files) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(files);
+            }
 
-                logger.debug("{cyan:File added:} {magenta:%s}", path.relative(ol.path.root, file));
+        });
 
-                ol.create(file).then(function (outputPaths) {
-
-                    outputPaths.sort();
-                    outputPaths.forEach(outputPath => {
-                        logger.info("{cyan:File built:} {magenta:%s}", path.relative(ol.path.root, outputPath));
-                    });
-
-                }).catch(function (err) {
-
-                    if (err.stack) {
-                        logger.error("{red:%s}", err.stack);
-                    } else {
-                        logger.error("{red:%s}", err);
-                    }
-                    logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
-
-                });
-
-            });
-        }
     });
+
+})).then(results => {
+
+    // flatten the array of results
+    let files = [].concat(...results);
+    return Promise.all(files.map(file => {
+
+        return ol.create(file).then(outputPaths => {
+
+            outputPaths.sort();
+            outputPaths.forEach(outputPath => {
+                if (outputPath) {
+                    logger.info("{cyan:File built:} {magenta:%s}", path.relative(ol.path.root, outputPath));
+                } else {
+                    logger.info("{cyan:File not built:} {magenta:%s}", path.relative(ol.path.root, file));
+                }
+            });
+
+            return Promise.resolve(outputPaths);
+
+        }).catch(err => {
+
+            if (err.stack) {
+                logger.error("{red:%s}", err.stack);
+            } else {
+                logger.error("{red:%s}", err);
+            }
+            logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.root, file));
+
+            return Promise.reject(err);
+
+        });
+
+    }));
+
+}).then(results => {
+
+    // everything has been built
+    logger.info("Build had no errors.");
+
+}, err => {
+
+    if (err.stack) {
+        logger.error("{red:%s}", err.stack);
+    } else {
+        logger.error("{red:%s}", err);
+    }
+    logger.error("{red:Build had errors.}");
+
+}).catch(err => {
+
+    if (err.stack) {
+        logger.error("{red:%s}", err.stack);
+    } else {
+        logger.error("{red:%s}", err);
+    }
+
+}).then(() => {
+
+    finishUp();
 
 });
 
-if (program.copyStaticFiles) {
 
-    // copy all files in the static folder
-    let staticDir = path.join(ol.path.site, "static");
-    let pattern = path.join(staticDir, "**");
-    glob(pattern, { nodir: true }, function copyFiles (err, files) {
+function finishUp() {
 
-        if (err) {
-            throw err;
-        }
+    // (optionally) write publication dates to file
+    if (program.saveFuturePubDates) {
 
-        if (files !== [pattern]) {
-            files.forEach(function processFile (file) {
+        let dates = ol.getPublicationDates();
 
-                ol.tryToCopyStaticFile(file);
+        if (dates && dates.length > 0) {
+
+            let data = dates.map(date => {
+
+                // saves dates in seconds since unix epoch
+                // and a locale string to simplify debuging
+                let secondsSinceEpoch = Math.round(date.getTime() / 1000);
+                let localeString = date.toLocaleString();
+                return `${secondsSinceEpoch} ${localeString}`;
+
+            }).join("\n") + "\n";
+            fs.writeFile(path.join(ol.path.root, ".future-publication-dates"), data, (err) => {
+
+                if (err) {
+                    throw err;
+                } else {
+                    logger.info("Future publication dates saved.");
+                }
 
             });
+
+        } else {
+
+            logger.info("No future publication dates found.");
+
         }
 
-    });
+    }
 
-    // copy static files in the pages folder
-    staticFilePatterns.forEach(function (pattern) {
+    // (optionally) copy static files
+    if (program.copyStaticFiles) {
 
-        glob(pattern, function copyFiles (err, files) {
+        // copy all files in the static folder
+        let staticDir = path.join(ol.path.site, "static");
+        let pattern = path.join(staticDir, "**");
+        glob(pattern, { nodir: true }, function copyFiles (err, files) {
 
             if (err) {
                 throw err;
@@ -165,7 +219,37 @@ if (program.copyStaticFiles) {
 
         });
 
-    });
+        const staticFilePatterns = [
+            path.join(ol.path.pages, "**/*.css"),
+            path.join(ol.path.pages, "**/!(*data).js"),
+            path.join(ol.path.pages, "**/*.svg"),
+            path.join(ol.path.pages, "**/*.png"),
+            path.join(ol.path.pages, "**/*.(jpg|jpeg)"),
+        ];
 
+        // copy static files in the pages folder
+        staticFilePatterns.forEach(function (pattern) {
+
+            glob(pattern, function copyFiles (err, files) {
+
+                if (err) {
+                    throw err;
+                }
+
+                if (files !== [pattern]) {
+                    files.forEach(function processFile (file) {
+
+                        ol.tryToCopyStaticFile(file);
+
+                    });
+                }
+
+            });
+
+        });
+
+        logger.info("Static files copied.");
+
+    }
 
 }

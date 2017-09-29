@@ -1,6 +1,18 @@
 # Orchid Lead Change Log
 
 
+_v2.2.0 — September 28, 2017_
+
+* added option to output file containing a list of future publication dates
+    * this can be used to schedule builds
+* refactored more loops with async functions to use Promises
+* copying static files and saving future pub dates are now down after building is completed
+* added log message when everything is done building
+* updated `orchid-lead watch` to "gracefullify" all calls to `fs`
+* added code to ignore data.js files during an add event
+* refactored `registerPartials` function to use glob to find all partial files instead of homemade recursive fuction that didn't recurse more than one level.
+
+
 _v2.1.4 — June 13, 2017_
 
 * allow constructor to be called without options
