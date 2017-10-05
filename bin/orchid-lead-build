@@ -173,9 +173,9 @@ function finishUp() {
             let data = dates.map(date => {
 
                 // saves dates in seconds since unix epoch
-                // and a locale string to simplify debuging
+                // and a human reabable string for debugging
                 let secondsSinceEpoch = Math.round(date.getTime() / 1000);
-                let localeString = date.toLocaleString();
+                let localeString = date.toString();
                 return `${secondsSinceEpoch} ${localeString}`;
 
             }).join("\n") + "\n";
