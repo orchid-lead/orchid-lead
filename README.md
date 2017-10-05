@@ -165,12 +165,17 @@ The default config filename is `.orchidleadrc` and the default location is in th
 
 ## Options
 
-Optionally, orchid-lead can save a file with a list of timestamps for all the pages it encounters with a publication date, in the data context, in the future.
+Optionally, orchid-lead can save a file with a list of timestamps for all the pages it encounters with a publication date in the future, in the page data context. The publication date key may be any of the following and it's value must be an [ISO 8601][iso-8601] formatted date string.
 
-The filename is currently hardcoded to `.future-publication-dates`. The timestamps are formatted as an integer with the number of seconds since the Unix Epoch, followed by the same timestamp in locale format, and seperated by a new line character. For example:
+* `publicationDate`
+* `publication_date`
+* `publication date`
+* `publication:date`
 
-	1506862800 10/1/2017, 6:00:00 AM
-	1507561200 10/9/2017, 8:00:00 AM
+The filename is currently hardcoded to `.future-publication-dates`. The timestamps are formatted as an integer with the number of seconds since the Unix Epoch, followed by the same timestamp in a more human friendly format. Each record is seperated by a new line character. For example:
+
+	1506862800 Sun Oct 01 2017 06:00:00 GMT-0700 (PDT)
+	1507561200 Mon Oct 09 2017 08:00:00 GMT-0700 (PDT)
 	
 
 
@@ -211,3 +216,4 @@ Orchid Lead is available under the [MIT License][1].
 [gulp]: http://gulpjs.com
 [brunch]: http://brunch.io
 [make]: https://www.gnu.org/software/make/
+[iso-8601]: https://xkcd.com/1179/
