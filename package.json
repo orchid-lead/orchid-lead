@@ -1,6 +1,6 @@
 {
   "name": "orchid-lead",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Generate HTML files from Handlebars templates with data from node.js modules or JSON data files.",
   "keywords": "static-site-generator html-generator handlebars-templates handlebars templates layouts wax-on-layouts",
   "main": "lib/orchid-lead.js",

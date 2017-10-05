@@ -1,5 +1,9 @@
 # Orchid Lead Change Log
 
+_v2.2.1 — October 5, 2017_
+
+* changed format of human readable date string in future pubs file
+* improved documentation of this option
 
 _v2.2.0 — September 28, 2017_
 
