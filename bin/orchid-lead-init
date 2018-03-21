@@ -45,7 +45,7 @@ program.args.forEach(function processArg (dirname) {
     if (program.with) {
 
         // initialize with a custom starter kit
-        if (program.with.match(/^[a-zA-Z0-9][a-zA-Z0-9_\-]+[a-zA-Z0-9]\/[a-zA-Z0-9_\-]+$/)) {
+        if (program.with.match(/^[a-zA-Z0-9][a-zA-Z0-9_-]+[a-zA-Z0-9]\/[a-zA-Z0-9_-]+$/)) {
 
             starterKit = program.with;
 

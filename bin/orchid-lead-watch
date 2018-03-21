@@ -283,14 +283,14 @@ if (program.args.length === 0) {
 program.args.forEach(function processArg (arg) {
 
     var watcher = chokidar.watch(arg, {
-        ignored: /[\/\\]\./,
+        ignored: /[/\\]\./,
         persistent: true
     });
 
     watcher
-    .on("add", findAndCreate)
-    .on("change", findAndUpdate)
-    .on("unlink", findAndDestroy);
+        .on("add", findAndCreate)
+        .on("change", findAndUpdate)
+        .on("unlink", findAndDestroy);
 
 });
 
@@ -301,32 +301,32 @@ var watcher = chokidar.watch([
     ol.path.partials,
     path.resolve(ol.path.site, "data.js")
 ], {
-    ignored: /[\/\\]\./,
+    ignored: /[/\\]\./,
     persistent: true
 });
 
 watcher
-.on("change", changeSiteAndBuildAll);
+    .on("change", changeSiteAndBuildAll);
 
 // watch static files if copy static files is enabled
 if (program.copyStaticFiles) {
 
     var staticPath = path.join(ol.path.site, "static");
     var staticWatcher = chokidar.watch(staticPath, {
-        ignored: /[\/\\]\./,
+        ignored: /[/\\]\./,
         persistent: true
     });
 
     staticWatcher
-    .on("add", function (file) {
-        logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.site, file));
-        ol.tryToCopyStaticFile(file);
-    })
-    .on("change", function (file) {
-        logger.info("{cyan:File changed:} {magenta:%s}", path.relative(ol.path.site, file));
-        ol.tryToCopyStaticFile(file);
-    })
-    .on("unlink", ol.tryToDeleteStaticFile);
+        .on("add", function (file) {
+            logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.site, file));
+            ol.tryToCopyStaticFile(file);
+        })
+        .on("change", function (file) {
+            logger.info("{cyan:File changed:} {magenta:%s}", path.relative(ol.path.site, file));
+            ol.tryToCopyStaticFile(file);
+        })
+        .on("unlink", ol.tryToDeleteStaticFile);
 
 }
 

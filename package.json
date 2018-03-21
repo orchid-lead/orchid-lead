@@ -8,11 +8,10 @@
     "orchid-lead": "bin/orchid-lead"
   },
   "dependencies": {
-    "chokidar": "^1.6.1",
+    "chokidar": "^2.0.1",
     "commander": "^2.9.0",
     "eazy-logger": "^3.0.2",
-    "eslint": "^3.12.0",
-    "findup-sync": "^0.4.3",
+    "findup-sync": "^2.0.0",
     "front-matter": "^2.1.1",
     "fs-vacuum": "^1.2.9",
     "glob": "^7.1.1",
@@ -22,11 +21,11 @@
     "minimatch": "^3.0.3",
     "mkdirp": "^0.5.1",
     "request": "^2.79.0",
-    "tar": "^2.2.1",
-    "wax-on": "^1.0.3"
+    "tar": "^4.3.3",
+    "wax-on": "^1.2.1"
   },
   "devDependencies": {
-    "eslint": "^3.8.1"
+    "eslint": "^4.17.0"
   },
   "scripts": {
     "test": "eslint \"bin/*\" \"**/*.js\""

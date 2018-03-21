@@ -132,7 +132,7 @@ Promise.all(program.args.map(arg => {
 
     }));
 
-}).then(results => {
+}).then(() => {
 
     // everything has been built
     logger.info("Build had no errors.");
