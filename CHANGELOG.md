@@ -1,5 +1,22 @@
 # Orchid Lead Change Log
 
+_v2.3.0 — April 19, 2018_
+
+* per-page data context is loaded into the root data context instead of under the `page` property, accessing the `page` property is deprecated
+* page output path is available in the global `__path` variable in the data context, the `page.path` property is deprecated
+* no longer overrides global fs methods with graceful-fs, only local
+* no longer re-builds the Handlebars template file when a nearby CSS or JS file is updated
+* fixed bug where an error was reported for pages that should not be built in `orchid-lead watch`
+* tried to make the relative output paths more consistent
+
+_v2.2.3 — April 13, 2018_
+
+* added code the always strip "index.html" from the page path variable in the data context
+
+_v2.2.2 — February 8, 2018_
+
+* dependencies were updated to their latest
+
 _v2.2.1 — October 5, 2017_
 
 * changed format of human readable date string in future pubs file

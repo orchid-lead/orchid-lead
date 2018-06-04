@@ -2,10 +2,7 @@
 
 "use strict";
 
-var fs = require("fs");
-var gracefulFs = require("graceful-fs");
-gracefulFs.gracefulify(fs);
-
+const fs = require("graceful-fs");
 const path = require("path");
 const pkg = require("../package.json");
 

@@ -2,10 +2,6 @@
 
 "use strict";
 
-var realFs = require("fs");
-var gracefulFs = require("graceful-fs");
-gracefulFs.gracefulify(realFs);
-
 const fs = require("graceful-fs");
 const path = require("path");
 
@@ -49,6 +45,8 @@ const staticFilePatterns = [
 
 /**
  * find and build page file
+ * supports building the hbs file that belongs to a data.js file
+ * TODO find nearest HBS file
  */
 function findPageFile (file) {
 
@@ -60,7 +58,22 @@ function findPageFile (file) {
         // if the extension is hbs then you found the page file
         return file;
 
+    } else if (elements.ext === ".js" && elements.name.match(/\.data$/)) {
+
+        // drop the .data extension and look for a file that matches
+        elements.name = path.basename(elements.name, ".data");
+        elements.ext = ".hbs";
+        elements.base = null;
+        test = path.format(elements);
+        console.log(test);
+        return test;
+
     } else {
+
+        // don't go looking for a bunch of other files
+        // causes extra builds at launch and is unnecessary
+        // since CSS and JS are not injected into the HTML
+        return;
 
         // change the extension to hbs and look for that file
         elements.ext = ".hbs";
@@ -125,12 +138,16 @@ function tryToCreate (file) {
 
         outputPaths.sort();
         outputPaths.forEach(outputPath => {
-            logger.info("{cyan:File built:} {magenta:%s}", path.relative(ol.path.root, outputPath));
+            if (outputPath) {
+                logger.info("{cyan:File built:} {magenta:%s}", path.relative(ol.path.root, outputPath));
+            } else {
+                logger.info("{cyan:File not built:} {magenta:%s}", path.relative(ol.path.root, file));
+            }
         });
 
     }).catch(function (err) {
 
-        logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.site, file));
+        logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.root, file));
         logger.error("{red:%s}", err);
 
     });

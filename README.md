@@ -8,7 +8,7 @@ While Orchid Lead can copy static assets from the source folder to the build fol
 
 Orchid lead also focuses on speed, especially, speed of development. With an off-the-shelf file system watcher, the excellent [Chokidar][chokidar], Orchid Lead is able to quickly and reliably rebuild output files as the sources change. This feature is best paired with [Browsersync][browsersync] or [LiveReload][livereload] so the changes appear instantly in your browser.
 
-† HTML is the primary use case, but any text file will work.
+† HTML is the primary use case, but technically, any plain text file will work.
 
 
 ## Install
@@ -165,7 +165,7 @@ The default config filename is `.orchidleadrc` and the default location is in th
 
 ## Options
 
-Optionally, orchid-lead can save a file with a list of timestamps for all the pages it encounters with a publication date in the future, in the page data context. The publication date key may be any of the following and it's value must be an [ISO 8601][iso-8601] formatted date string.
+Optionally, orchid-lead can save a file with a list of timestamps for all the pages it encounters with a publication date in the future, in the data context. The publication date key may be any of the following and it's value must be an [ISO 8601][iso-8601] formatted date string.
 
 * `publicationDate`
 * `publication_date`
