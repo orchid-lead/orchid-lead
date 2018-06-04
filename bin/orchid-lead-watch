@@ -10,6 +10,7 @@ const program = require("commander");
 const glob = require("glob");
 const chokidar = require("chokidar");
 const minimatch = require("minimatch");
+const debounce = require("lodash/debounce");
 
 const logger = require("eazy-logger").Logger({
     "prefix": "[{gray:OL}] ",
@@ -322,8 +323,8 @@ var watcher = chokidar.watch([
     persistent: true
 });
 
-watcher
-    .on("change", changeSiteAndBuildAll);
+// avoid calling changeSiteAndBuildAll too often
+watcher.on("change", debounce(changeSiteAndBuildAll, 400));
 
 // watch static files if copy static files is enabled
 if (program.copyStaticFiles) {
