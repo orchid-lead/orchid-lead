@@ -7,7 +7,7 @@ _v2.3.0 — April 19, 2018_
 * no longer overrides global fs methods with graceful-fs, only local
 * no longer re-builds the Handlebars template file when a nearby CSS or JS file is updated
 * fixed bug where an error was reported for pages that should not be built in `orchid-lead watch`
-* tried to make the relative output paths more consistent
+* improved consistency of relative paths in log
 
 _v2.2.3 — April 13, 2018_
 
