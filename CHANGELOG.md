@@ -1,5 +1,9 @@
 # Orchid Lead Change Log
 
+_v2.3.1 — June 5, 2018_
+
+* debounce the callback for change events for files that require a full build
+
 _v2.3.0 — April 19, 2018_
 
 * per-page data context is loaded into the root data context instead of under the `page` property, accessing the `page` property is deprecated
