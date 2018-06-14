@@ -1,5 +1,10 @@
 # Orchid Lead Change Log
 
+_v2.4.0 — June 13, 2018_
+
+* added Q promises library for Q.allSettled and Q.promisify
+* wait until all pages are built before wrapping up, even if there's an error
+
 _v2.3.1 — June 5, 2018_
 
 * debounce the callback for change events for files that require a full build
