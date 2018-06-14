@@ -6,6 +6,7 @@ const fs = require("graceful-fs");
 const path = require("path");
 const pkg = require("../package.json");
 
+const Q = require("q");
 const program = require("commander");
 const glob = require("glob");
 const logger    = require("eazy-logger").Logger({
@@ -99,7 +100,7 @@ Promise.all(program.args.map(arg => {
 
     // flatten the array of results
     let files = [].concat(...results);
-    return Promise.all(files.map(file => {
+    Q.allSettled(files.map(file => {
 
         return ol.create(file).then(outputPaths => {
 
@@ -127,33 +128,39 @@ Promise.all(program.args.map(arg => {
 
         });
 
-    }));
+    })).then(function (results) {
 
-}).then(() => {
+        let numberResolved = 0;
 
-    // everything has been built
-    logger.info("Build had no errors.");
+        // all templates have been processed
+        results.forEach(function (result) {
+            if (result.state === "fulfilled") {
 
-}, err => {
+                // template compiled successfully
+                numberResolved += 1;
 
-    if (err.stack) {
-        logger.error("{red:%s}", err.stack);
-    } else {
-        logger.error("{red:%s}", err);
-    }
-    logger.error("{red:Build had errors.}");
+            } else {
 
-}).catch(err => {
+                // template failed to compile for some reason
+                logger.error("{red:Build %s}", result.reason);
 
-    if (err.stack) {
-        logger.error("{red:%s}", err.stack);
-    } else {
-        logger.error("{red:%s}", err);
-    }
+            }
+        });
 
-}).then(() => {
+        if (results.length === numberResolved) {
 
-    finishUp();
+            // everything has been built
+            logger.info("Build had no errors.");
+
+        } else {
+
+            logger.info("Full stack traces and source file are logged at time of error.");
+
+        }
+
+        finishUp();
+
+    });
 
 });
 
