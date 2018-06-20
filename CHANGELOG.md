@@ -1,5 +1,9 @@
 # Orchid Lead Change Log
 
+_v2.4.1 — June 13, 2018_
+
+* increased minimum version of lodash library to address vuln
+
 _v2.4.0 — June 13, 2018_
 
 * added Q promises library for Q.allSettled and Q.promisify
