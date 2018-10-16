@@ -23,6 +23,7 @@ program
     .description("Watch source files for changes and regenerate output files on-demand.")
     .option("-C, --config <path>", "path to config file", ".orchidleadrc")
     .option("-c, --copy-static-files", "copy static files to output folder")
+    .option("--initial", "build all files on initial start")
     .parse(process.argv);
 
 let ol;
@@ -302,6 +303,7 @@ program.args.forEach(function processArg (arg) {
 
     var watcher = chokidar.watch(arg, {
         ignored: /[/\\]\./,
+        ignoreInitial: !program.initial,
         persistent: true
     });
 
