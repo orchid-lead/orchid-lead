@@ -1,5 +1,9 @@
 # Orchid Lead Change Log
 
+_v2.4.2 — October 16, 2018_
+
+* added option to watch command to run the initial build on start
+
 _v2.4.1 — June 13, 2018_
 
 * increased minimum version of lodash library to address vuln

@@ -58,6 +58,12 @@ Or, generate the output files once with the `build` sub-command.
 orchid-lead build
 ````
 
+To generate all output files once and continue moitoring the source files for changes, use the `watch` sub-command with the `--initial` option.
+
+```shell
+orchid-lead watch --initial
+```
+
 Optionally, you can specify the specific source files to regenerate with a [glob][glob] pattern.
 
 ```shell
