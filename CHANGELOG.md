@@ -1,5 +1,12 @@
 # Orchid Lead Change Log
 
+_v2.5.0 — October 16, 2018_
+
+* added feature to build all templates in the same folder as the file that changed when watching
+* added feature where data contexts are uncached when not in production environment
+* fixed a bug where changes to data.json files did not compile the related template
+* upgraded dependency: front-matter
+
 _v2.4.2 — October 16, 2018_
 
 * added option to watch command to run the initial build on start
