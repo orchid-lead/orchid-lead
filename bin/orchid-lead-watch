@@ -141,7 +141,7 @@ function findAndUpdate (file) {
     logger.info("{cyan:File changed:} {magenta:%s}", path.relative(ol.path.site, file));
 
     // if file is a data file, then delete it's entry from the require() cache
-    if (file.match(/data\.js(on)?$/)) {
+    if (file.match(/\.js(on|x)?$/)) {
 
         delete require.cache[path.resolve(file)];
 
@@ -211,7 +211,7 @@ function buildAll (file) {
 function changeSiteAndBuildAll (file) {
 
     // if file is a data file, then delete it's entry from the require() cache
-    if (file.match(/data\.js(on)?$/)) {
+    if (file.match(/\.js(on|x)?$/)) {
 
         delete require.cache[path.resolve(file)];
 
