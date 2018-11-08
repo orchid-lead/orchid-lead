@@ -8,25 +8,25 @@
     "orchid-lead": "bin/orchid-lead"
   },
   "dependencies": {
-    "chokidar": "^2.0.1",
-    "commander": "^2.9.0",
-    "eazy-logger": "^3.0.2",
+    "chokidar": "^2.0.0",
+    "commander": "^2.0.0",
+    "eazy-logger": "^3.0.0",
     "findup-sync": "^2.0.0",
-    "front-matter": "^2.1.1",
-    "fs-vacuum": "^1.2.9",
-    "glob": "^7.1.1",
-    "graceful-fs": "^4.1.11",
-    "handlebars": "^4.0.6",
-    "lodash": "^4.17.5",
-    "minimatch": "^3.0.3",
-    "mkdirp": "^0.5.1",
-    "q": "^1.5.1",
-    "request": "^2.79.0",
-    "tar": "^4.3.3",
-    "wax-on": "^1.2.1"
+    "front-matter": "^3.0.0",
+    "fs-vacuum": "^1.0.0",
+    "glob": "^7.0.0",
+    "graceful-fs": "^4.0.0",
+    "handlebars": "^4.0.0",
+    "lodash": "^4.0.0",
+    "minimatch": "^3.0.0",
+    "mkdirp": "^0.5.0",
+    "q": "^1.0.0",
+    "request": "^2.0.0",
+    "tar": "^4.0.0",
+    "wax-on": "^1.0.0"
   },
   "devDependencies": {
-    "eslint": "^4.17.0"
+    "eslint": "^5.0.0"
   },
   "scripts": {
     "test": "eslint \"bin/*\" \"**/*.js\""
