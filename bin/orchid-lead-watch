@@ -23,6 +23,7 @@ program
     .option("-C, --config <path>", "path to config file", ".orchidleadrc")
     .option("-c, --copy-static-files", "copy static files to output folder")
     .option("--initial", "build all files on initial start")
+    .option("--rebuild-all", "build all files on layout/partial/helper change")
     .parse(process.argv);
 
 let ol;
@@ -43,6 +44,8 @@ const staticFilePatterns = [
     path.join(ol.path.pages, "**/*.png"),
     path.join(ol.path.pages, "**/*.(jpg|jpeg)"),
 ];
+
+const recentFileChanges = new Set();
 
 /**
  * find and build page file
@@ -131,6 +134,7 @@ function updateOrCreate (file) {
 
 function findAndCreate (file) {
 
+    recentFileChanges.add(file);
     logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.site, file));
     updateOrCreate(file);
 
@@ -138,6 +142,7 @@ function findAndCreate (file) {
 
 function findAndUpdate (file) {
 
+    recentFileChanges.add(file);
     logger.info("{cyan:File changed:} {magenta:%s}", path.relative(ol.path.site, file));
 
     // if file is a data file, then delete it's entry from the require() cache
@@ -153,6 +158,7 @@ function findAndUpdate (file) {
 
 function findAndDestroy (file) {
 
+    recentFileChanges.delete(file);
     logger.info("{cyan:File deleted:} {magenta:%s}", path.relative(ol.path.site, file));
 
     // remove static files
@@ -208,6 +214,20 @@ function buildAll (file) {
 
 }
 
+function buildRecent (file) {
+
+    logger.info("{cyan:File changed:} {magenta:%s}", path.relative(ol.path.root, file));
+
+    const files = recentFileChanges;
+    files.forEach(function processFile (file) {
+
+        logger.info("{cyan:File added:} {magenta:%s}", path.relative(ol.path.root, file));
+        tryToCreate(file);
+
+    });
+
+}
+
 function changeSiteAndBuildAll (file) {
 
     // if file is a data file, then delete it's entry from the require() cache
@@ -230,6 +250,19 @@ function changeSiteAndBuildAll (file) {
     });
 
     return buildAll(file);
+
+}
+
+function changeSiteAndBuildRecent (file) {
+
+    // if file is a data file, then delete it's entry from the require() cache
+    if (file.match(/\.js(on|x)?$/)) {
+
+        delete require.cache[path.resolve(file)];
+
+    }
+
+    return buildRecent(file);
 
 }
 
@@ -257,7 +290,8 @@ program.args.forEach(function processArg (arg) {
 
 });
 
-// always watch site files and rebuild entire site when changed
+// always watch site files and rebuild recent changed files
+// optionally rebuild entire site when changed
 var watcher = chokidar.watch([
     ol.path.helpers,
     ol.path.layouts,
@@ -268,8 +302,19 @@ var watcher = chokidar.watch([
     persistent: true
 });
 
-// avoid calling changeSiteAndBuildAll too often
-watcher.on("change", debounce(changeSiteAndBuildAll, 400));
+if (program.rebuildAll) {
+
+    // avoid calling changeSiteAndBuildAll too often
+    watcher.on("change", debounce(changeSiteAndBuildAll, 400));
+
+} else {
+
+    // only build recent changed files
+    watcher.on("add", debounce(changeSiteAndBuildRecent, 400));
+    watcher.on("change", debounce(changeSiteAndBuildRecent, 400));
+    watcher.on("unlink", debounce(changeSiteAndBuildRecent, 400));
+
+}
 
 // watch static files if copy static files is enabled
 if (program.copyStaticFiles) {
