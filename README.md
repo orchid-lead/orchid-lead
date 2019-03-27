@@ -58,10 +58,16 @@ Or, generate the output files once with the `build` sub-command.
 orchid-lead build
 ````
 
-To generate all output files once and continue moitoring the source files for changes, use the `watch` sub-command with the `--initial` option.
+To generate all output files once and continue monitoring the source files for changes, use the `watch` sub-command with the `--initial` option.
 
 ```shell
 orchid-lead watch --initial
+```
+
+To generate all output files after every change to the shared source files (helpers, layouts, and partials), then add the `--rebuild-all` option to the `watch` sub-command. Otherwise, the default is to only generate output files for the sources files that have changed since the program begin.
+
+```shell
+orchid-lead watch --rebuild-all
 ```
 
 Optionally, you can specify the specific source files to regenerate with a [glob][glob] pattern.
@@ -194,8 +200,8 @@ The filename is currently hardcoded to `.future-publication-dates`. The timestam
 * add `clean` sub-command for removing generated files
 * test performance
 * create JS API to ease use with Gulp
-* test with node 4.5.x
 * check for existing install before initializing
+* create sub-command (or option) to generate a list of all output files that would be generate but do not actually generate them
 
 Please create a new issue if you find a bug or would like to recommend a new feature.
 

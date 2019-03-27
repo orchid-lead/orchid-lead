@@ -1,5 +1,10 @@
 # Orchid Lead Change Log
 
+_v3.0.0 — March 27, 2019_
+
+* when a change to a shared source file is detected, only output files for source files that have changed since orchid-lead was started will be regenerated.
+* the old behavior of regernerating all output files can be restored by using the `--rebuild-all` option to the `watch` sub-command.
+
 _v2.5.0 — October 16, 2018_
 
 * added feature to build all templates in the same folder as the file that changed when watching
