@@ -2,7 +2,7 @@
 
 Generate HTML files from Handlebars templates with data from node.js modules or JSON data files.
 
-[![npm version](https://badge.fury.io/js/orchid-lead.svg)](https://badge.fury.io/js/orchid-lead)
+[![npm version](https://badge.fury.io/js/orchid-lead.svg)](https://www.npmjs.com/package/orchid-lead)
 [![dependencies](https://img.shields.io/david/orchid-lead/orchid-lead.svg)](https://david-dm.org/orchid-lead/orchid-lead)
 [![dev dependencies](https://img.shields.io/david/dev/orchid-lead/orchid-lead.svg)](https://david-dm.org/orchid-lead/orchid-lead?type=dev)
 ![npm downloads per month](https://img.shields.io/npm/dm/orchid-lead.svg)
