@@ -1,5 +1,13 @@
 # Orchid Lead
 
+Generate HTML files from Handlebars templates with data from node.js modules or JSON data files.
+
+[![npm version](https://badge.fury.io/js/orchid-lead.svg)](https://badge.fury.io/js/orchid-lead)
+[![dependencies](https://img.shields.io/david/orchid-lead/orchid-lead.svg)](https://david-dm.org/orchid-lead/orchid-lead)
+[![dev dependencies](https://img.shields.io/david/dev/orchid-lead/orchid-lead.svg)](https://david-dm.org/orchid-lead/orchid-lead?type=dev)
+![npm downloads per month](https://img.shields.io/npm/dm/orchid-lead.svg)
+[![npm license](https://img.shields.io/npm/l/orchid-lead.svg?color=blue)](https://github.com/orchid-lead/orchid-lead/blob/master/LICENSE)
+
 Orchid Lead is a program focused on doing one thing well: generating HTML† files from templates and data, in this case, [Handlebars][handlebars] templates and JSON data. Orchid Lead is a static site generator, without all the cruft and requirements of other static site generators because it focuses on the HTML and the data.
 
 Notably, Orchid Lead doesn't dictate a particular build tool. It integrates with your current build tools like [Gulp][gulp], [Brunch][brunch], [NPM][npm-build-tool], or even [make][make]. It gathers the data and runs it through the Handlebars template, along with helpers, partials, and [layouts][waxon] to generate the final output file in the build folder.
