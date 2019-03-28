@@ -228,7 +228,7 @@ function buildRecent (file) {
 
 }
 
-function changeSiteAndBuildAll (file) {
+function clearCacheAndReregister (file) {
 
     // if file is a data file, then delete it's entry from the require() cache
     if (file.match(/\.js(on|x)?$/)) {
@@ -240,6 +240,7 @@ function changeSiteAndBuildAll (file) {
     // reregister Handlebars helpers
     // reregister Handlebars partials
     // TODO is this really a good idea?
+    // YES, it is a good. It clears the "cache" for helpers and partials.
     ol = new OrchidLead({
         output: program.output,
         site: program.site,
@@ -249,18 +250,19 @@ function changeSiteAndBuildAll (file) {
         partials: program.partials
     });
 
+}
+
+function changeSiteAndBuildAll (file) {
+
+    clearCacheAndReregister(file);
+
     return buildAll(file);
 
 }
 
 function changeSiteAndBuildRecent (file) {
 
-    // if file is a data file, then delete it's entry from the require() cache
-    if (file.match(/\.js(on|x)?$/)) {
-
-        delete require.cache[path.resolve(file)];
-
-    }
+    clearCacheAndReregister(file);
 
     return buildRecent(file);
 
