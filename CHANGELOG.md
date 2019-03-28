@@ -1,5 +1,9 @@
 # Orchid Lead Change Log
 
+_v3.0.1— March 27, 2019_
+
+* updated dependencies
+
 _v3.0.0 — March 27, 2019_
 
 * when a change to a shared source file is detected, only output files for source files that have changed since orchid-lead was started will be regenerated.
