@@ -1,5 +1,9 @@
 # Orchid Lead Change Log
 
+_v3.0.2— March 28, 2019_
+
+* fixed bug to reload helpers and partials from the file system when a shared source file changes
+
 _v3.0.1— March 27, 2019_
 
 * updated dependencies
