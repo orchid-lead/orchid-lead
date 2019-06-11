@@ -120,7 +120,7 @@ function updateOrCreate (file) {
 
     if (!match) {
 
-        // find page file that coorisponds to the file that was chagned
+        // find page file that corresponds to the file that was changed
         const files = findPageFiles(file);
         if (files) {
 
@@ -145,7 +145,7 @@ function findAndUpdate (file) {
     recentFileChanges.add(file);
     logger.info("{cyan:File changed:} {magenta:%s}", path.relative(ol.path.site, file));
 
-    // if file is a data file, then delete it's entry from the require() cache
+    // if file is a JavaScript file, then delete it's entry from the require() cache
     if (file.match(/\.js(on|x)?$/)) {
 
         delete require.cache[path.resolve(file)];
@@ -172,7 +172,7 @@ function findAndDestroy (file) {
 
     });
 
-    // find page file that coorisponds to the file that was chagned
+    // find page file that corresponds to the file that was changed
     const files = findPageFiles(file);
     if (files) {
 
