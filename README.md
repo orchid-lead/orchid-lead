@@ -44,7 +44,7 @@ cd existing-dirname
 orchid-lead init
 ```
 
-This will install the default starter kit into new-dirname and existing-dirname, respectfully. If you'd like to use a different starter kit then just add the `--with` argument and a github repo reference.
+This will install the default starter kit into new-dirname and existing-dirname, respectfully. If you'd like to use a different starter kit then just add the `--with` argument and a GitHub repo reference.
 
 ```shell
 orchid-lead init --with orchid-lead/starter-kit-default new-dirname
@@ -144,7 +144,7 @@ Orchid Lead will also look for a nearby data file. The data file may be a static
 #### Sample data.js file (async)
 
 ```js
-    // data.js (async with promies)
+    // data.js (async with promises)
     var request = require("request");
 
     module.exports = new Promise((resolve, reject) => {
@@ -165,7 +165,7 @@ Orchid Lead will also look for a nearby data file. The data file may be a static
     });
 ```
 
-Site wide data is pulled in from `site/data.js`. All site-wide data is available under the `site` object in the Handlebars data context. The nearby data file and the front matter are merged together and available under the `page` object in the Hanldebars data context.
+Site wide data is pulled in from `site/data.js`. All site-wide data is available under the `site` object in the Handlebars data context. The nearby data file and the front matter are merged together and available under the `page` object in the Handlebars data context.
 
 
 ## Configuration
@@ -192,7 +192,7 @@ Optionally, orchid-lead can save a file with a list of timestamps for all the pa
 * `publication date`
 * `publication:date`
 
-The filename is currently hardcoded to `.future-publication-dates`. The timestamps are formatted as an integer with the number of seconds since the Unix Epoch, followed by the same timestamp in a more human friendly format. Each record is seperated by a new line character. For example:
+The filename is currently hardcoded to `.future-publication-dates`. The timestamps are formatted as an integer with the number of seconds since the Unix Epoch, followed by the same timestamp in a more human friendly format. Each record is separated by a new line character. For example:
 
 	1506862800 Sun Oct 01 2017 06:00:00 GMT-0700 (PDT)
 	1507561200 Mon Oct 09 2017 08:00:00 GMT-0700 (PDT)
