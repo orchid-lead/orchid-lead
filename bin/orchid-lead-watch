@@ -97,7 +97,7 @@ function tryToCreate (file) {
     }).catch(function (err) {
 
         logger.error("{red:Build failed:} {magenta:%s}", path.relative(ol.path.root, file));
-        logger.error("{red:%s}", err);
+        setTimeout(function () { throw err; }, 0);
 
     });
 
@@ -183,7 +183,7 @@ function findAndDestroy (file) {
 
             }).catch(function (err) {
 
-                throw err;
+                setTimeout(function () { throw err; }, 0);
 
             });
         });
