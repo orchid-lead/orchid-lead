@@ -1,5 +1,9 @@
 # Orchid Lead Change Log
 
+_v3.1.1— October 21, 2019_
+
+* updated dependencies to resolve security issues
+
 _v3.1.0— June 10, 2019_
 
 * improved debugging with stack traces when more errors occur
