@@ -62,16 +62,8 @@ if (program.args.length === 0) {
 
         } catch (err) {
 
-            try {
-
-                // otherwise build everything
-                program.args.push(path.join(ol.path.pages, "**/*.hbs"));
-
-            } catch (err) {
-
-                throw err;
-
-            }
+            // otherwise build everything
+            program.args.push(path.join(ol.path.pages, "**/*.hbs"));
 
         }
 
