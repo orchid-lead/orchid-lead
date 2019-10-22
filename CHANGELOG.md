@@ -1,5 +1,10 @@
 # Orchid Lead Change Log
 
+_v3.1.2— October 21, 2019_
+
+* updated all dependencies to latest version
+* removed unnecessary try/catch block
+
 _v3.1.1— October 21, 2019_
 
 * updated dependencies to resolve security issues
