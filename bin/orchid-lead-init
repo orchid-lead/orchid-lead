@@ -5,6 +5,7 @@
 const path = require("path");
 const pkg = require("../package.json");
 const zlib = require("zlib");
+const https = require("https");
 
 const program = require("commander");
 const logger    = require("eazy-logger").Logger({
@@ -12,7 +13,6 @@ const logger    = require("eazy-logger").Logger({
     useLevelPrefixes: false
 });
 const mkdirp = require("mkdirp");
-const request = require("request");
 const tar = require("tar");
 
 // setup init command
@@ -64,21 +64,22 @@ program.args.forEach(function processArg (dirname) {
     }
 
     // setup gzip and tar streams
-    output = tar.Extract({
-        "path": initPath,
-        "strip": 1
-    });
     gunzip = zlib.createGunzip();
+    output = tar.x({
+        "strip": 1,
+        "C": initPath
+    });
 
     // download starter kit and unarchive it
-    request(`https://github.com/${starterKit}/archive/master.tar.gz`)
-        .on("error", logger.error)
-        .pipe(gunzip)
-        .on("error", logger.error)
-        .pipe(output)
-        .on("error", (err) => {
-            logger.error(`{red:${err}}`);
-        });
+    https.get(`https://codeload.github.com/${starterKit}/tar.gz/master`, res => {
+
+        res.pipe(gunzip).pipe(output); 
+
+    }).on("error", (err) => {
+
+        logger.error(`{red:${err}}`);
+
+    });
 
     // TODO ask the user where they want their files and merge their choices with the specified command options, then extract the starter kit into a temporary directory and change the folder names as indicated by the user
 

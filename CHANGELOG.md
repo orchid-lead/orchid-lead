@@ -1,5 +1,11 @@
 # Orchid Lead Change Log
 
+_v3.1.3— April 8, 2020_
+
+* updated dependencies to resolve security issues
+* updated all dependencies to latest version
+* removed dependency on (the deprecated) request module
+
 _v3.1.2— October 21, 2019_
 
 * updated all dependencies to latest version
